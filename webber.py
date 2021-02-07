@@ -23,15 +23,15 @@ def rate_limiting(url):
     for send in range(20):
         response = requests.get(url)
     if response.ok:
-        print("RATE LIMITING [VULNERABLE]")
+        print("RATE LIMITING [\033[1;32;40mVULNERABLE \033[0m]")
     else:
-        print("RATE LIMITING [NOT VULNERABLE]")
+        print("RATE LIMITING [\033[0;31;47mNOT VULNERABLE\033[0m]")
         for by in range(15):
             bypass = requests.get(url, headers={"X-Forwarded-For": "127.0.0.1"})
         if bypass.ok:
-            print("RATE LIMITING BYPASS [VULNERABLE] - with Header 'X-Forwarded-For'")
+            print("RATE LIMITING BYPASS [\033[1;32;40mVULNERABLE\033[0m] - with Header 'X-Forwarded-For'")
         else:
-            print("RATE LIMITING BYPASS [NOT VULNERABLE]")
+            print("RATE LIMITING BYPASS [\033[0;31;47mNOT VULNERABLE\033[0m]")
 def verify(url):
     pedido = requests.get(url, headers={"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"})
     req = pedido.headers
@@ -44,23 +44,23 @@ def verify(url):
     ## Verificar se tem o header X-XSS-Protecion
     try:
         if req['X-XSS-Protection'] == "0":
-            print("XSS protection [VULNERABLE]")
+            print("XSS protection [\033[1;32;40mVULNERABLE\033[0m]")
         elif req['X-XSS-Protection'] == "1":
-            print("XSS protection [NOT VULNERABLE]")
+            print("XSS protection [\033[0;31;47mNOT VULNERABLE\033[0m]")
         elif req['X-XSS-Protection'] == "1; mode=block":
-            print("XSS protection [NOT VULNERABLE]")
+            print("XSS protection [\033[0;31;47mNOT VULNERABLE \033[0m]")
         else:
-            print("XSS protection [NOT VULNERABLE] - ", req['X-XSS-Protection'])
+            print("XSS protection [\033[0;31;47mNOT VULNERABLE \033[0m] - ", req['X-XSS-Protection'])
     except KeyError:
-        print("XSS protection [VULNERABLE] (not exist header!)")
+        print("XSS protection [\033[1;32;40mVULNERABLE \033[0m] (not exist header!)")
     ## Verificar se é vulneravel a Clickjacking
     try:
         if req['X-Frame-Options'] == "SAMEORIGIN":
-            print("Clickjacking [NOT VULNERABLE]")
+            print("Clickjacking [\033[0;31;47mNOT VULNERABLE \033[0m]")
         else:
-            print("Clickjacking [NOT VULNERABLE]")
+            print("Clickjacking [\033[0;31;47mNOT VULNERABLE\033[0m]")
     except KeyError:
-        print("Clickjacking [VULNERABLE]")
+        print("Clickjacking [\033[1;32;40mVULNERABLE \033[0m]")
 
 try:
     if args.url:
