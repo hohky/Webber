@@ -16,7 +16,7 @@ except AttributeError:
 __version__ = 1.0
 __author__ = 'HooS'
 
-parser = argparse.ArgumentParser(description="Para ver a geolocalização de um endereço de IP sem abrir uma única página")
+parser = argparse.ArgumentParser(description="Scan webpage for searching vulnerability!")
 parser.add_argument("-u", "--url", help="Indicar o URL")
 parser.add_argument("-v", "--version", help="Indicate the version of this tool'", action="store_true")
 parser.add_argument("--update", help="Update the tool",action="store_true")
