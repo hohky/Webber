@@ -20,14 +20,18 @@ if sys.version_info[0] < 3:
 
 def rate_limiting(url):
     print("Send multiple HTTP requests... Verify the rate limiting is exists...")
-    response = requests.get(url)
-    for send in range(50):
+    for send in range(20):
         response = requests.get(url)
-        print(response.status_code)
     if response.ok:
         print("RATE LIMITING [VULNERABLE]")
     else:
         print("RATE LIMITING [NOT VULNERABLE]")
+        for by in range(15):
+            bypass = requests.get(url, headers={"X-Forwarded-For": "127.0.0.1"})
+        if bypass.ok:
+            print("RATE LIMITING BYPASS [VULNERABLE] - with Header 'X-Forwarded-For'")
+        else:
+            print("RATE LIMITING BYPASS [NOT VULNERABLE]")
 def verify(url):
     pedido = requests.get(url, headers={"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"})
     req = pedido.headers
