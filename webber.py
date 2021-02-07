@@ -18,8 +18,18 @@ args = parser.parse_args()
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
 
+def rate_limiting(url):
+    print("Send multiple HTTP requests... Verify the rate limiting is exists...")
+    response = requests.get(url)
+    for send in range(50):
+        response = requests.get(url)
+        print(response.status_code)
+    if response.ok:
+        print("RATE LIMITING [VULNERABLE]")
+    else:
+        print("RATE LIMITING [NOT VULNERABLE]")
 def verify(url):
-    pedido = requests.get(url)
+    pedido = requests.get(url, headers={"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"})
     req = pedido.headers
     ## Verificar se tem o header Server
     try:
@@ -52,6 +62,7 @@ try:
     if args.url:
         print("URL: ", args.url)
         verify(args.url)
+        rate_limiting(args.url)
     if args.version:
         print("\n")
         print("Developed by "+ __author__)
