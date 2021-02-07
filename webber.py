@@ -3,8 +3,12 @@ import requests
 import argparse
 import time
 import sys
+import ctypes
 from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
+
+kernel32 = ctypes.windll.kernel32
+kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
 __version__ = 1.0
 __author__ = 'HooS'
