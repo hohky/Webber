@@ -75,6 +75,9 @@ def verify(url):
         print("Clickjacking [{Green}VULNERABLE {White}")
 
 try:
+    if not args.url:
+        banner()
+        print("\nHelp command -> --help")
     if args.url:
         banner()
         print("URL: ", args.url)
