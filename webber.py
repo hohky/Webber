@@ -86,8 +86,8 @@ try:
     if args.version:
         banner()
         print("\n")
-        print("Developed by "+ __author__)
-        print("Version of tool: "+ __version__)
+        print("Developed by ", __author__)
+        print("Version of tool: ", __version__)
     if args.update:
         ## Verify updates in repository github
         reqs = requests.get("https://raw.githubusercontent.com/hohky/Webber/main/options.json")
