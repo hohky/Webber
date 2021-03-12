@@ -83,20 +83,17 @@ def verify(url):
         print("Clickjacking [{Green}VULNERABLE {White}]")
 
 try:
-    if not args.url:
-        banner()
-        print("\nHelp command -> --help")
+    
     if args.url:
         banner()
         print("URL: ", args.url)
         verify(args.url)
         rate_limiting(args.url)
-    if args.version:
+    elif args.version:
         banner()
-        print("\n")
-        print("Developed by ", __author__)
-        print("Version of tool: ", __version__)
-    if args.update:
+        print("Developed by", __author__)
+        print(f"Version of tool:{Green}", __version__,White)
+    elif args.update:
         ## Verify updates in repository github
         reqs = requests.get("https://raw.githubusercontent.com/hohky/Webber/main/options.json")
         options = reqs.json()
@@ -105,6 +102,9 @@ try:
             print("The tool is up to date!")
         else:
             print(f"New Version: {options['version']} \n Update in https://github.com/hohky/Webber")
+    else:
+        banner()
+        print("\nHelp command -> --help")
 except ConnectionError:
     banner()
     print("\r ({}) Connection error!" .format(time.strftime("%X")))
