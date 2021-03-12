@@ -7,6 +7,13 @@ from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
 from colorama import init, Fore
 
+try:
+    import ctypes
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+except AttributeError:
+    pass
+
 Green = Fore.GREEN
 White = Fore.WHITE
 Red = Fore.RED
