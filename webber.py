@@ -3,20 +3,21 @@ import requests
 import argparse
 import time
 import sys
+import ctypes
 from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
 from colorama import init, Fore
 
+Green = Fore.GREEN
+White = Fore.WHITE
+Red = Fore.RED
+Cyan = Fore.CYAN
+
 try:
-    import ctypes
     kernel32 = ctypes.windll.kernel32
     kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 except AttributeError:
     pass
-
-Green = Fore.GREEN
-White = Fore.WHITE
-Red = Fore.RED
 
 __version__ = 1.1
 __author__ = 'HooS'
@@ -31,26 +32,26 @@ if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
 
 def banner():
-    print(''' __      __   _    _             
+    print(f'''{Cyan} __      __   _    _             
  \ \    / /__| |__| |__  ___ _ _ 
   \ \/\/ / -_) '_ \ '_ \/ -_) '_|
    \_/\_/\___|_.__/_.__/\___|_|  
-                                 ''')
+                                 {White}''')
 
 def rate_limiting(url):
     print("Send multiple HTTP requests... Verify the rate limiting is exists...")
     for send in range(20):
         response = requests.get(url)
     if response.ok:
-        print(f"RATE LIMITING [{Green}VULNERABLE {White}")
+        print(f"[{Green}+{White}] RATE LIMITING [{Green}VULNERABLE{White}]")
     else:
-        print(f"RATE LIMITING [{Red}NOT VULNERABLE{White}")
+        print(f"[{Red}-{White}] RATE LIMITING [{Red}NOT VULNERABLE{White}]")
         for by in range(15):
             bypass = requests.get(url, headers={"X-Forwarded-For": "127.0.0.1"})
         if bypass.ok:
-            print(f"RATE LIMITING BYPASS [{Green}VULNERABLE{White} - with Header 'X-Forwarded-For'")
+            print(f"[{Green}+{White}] RATE LIMITING BYPASS [{Green}VULNERABLE{White}] - with Header 'X-Forwarded-For'")
         else:
-            print(f"RATE LIMITING BYPASS [{Red}NOT VULNERABLE{White}")
+            print(f"[{Red}-{White}]RATE LIMITING BYPASS [{Red}NOT VULNERABLE{White}]")
 def verify(url):
     pedido = requests.get(url, headers={"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"})
     req = pedido.headers
@@ -63,23 +64,23 @@ def verify(url):
     ## Verificar se tem o header X-XSS-Protecion
     try:
         if req['X-XSS-Protection'] == "0":
-            print(f"XSS protection [{Green}VULNERABLE{White}")
+            print(f"[{Green}+{White}] XSS protection [{Green}VULNERABLE{White}]")
         elif req['X-XSS-Protection'] == "1":
-            print(f"XSS protection [{Red}NOT VULNERABLE{White}")
+            print(f"[{Red}-{White}] XSS protection [{Red}NOT VULNERABLE{White}]")
         elif req['X-XSS-Protection'] == "1; mode=block":
-            print(f"XSS protection [{Red}NOT VULNERABLE {White}")
+            print(f"[{Red}-{White}] XSS protection [{Red}NOT VULNERABLE{White}]")
         else:
-            print(f"XSS protection [{Red}NOT VULNERABLE {White} - ", req['X-XSS-Protection'])
+            print(f"[{Red}-{White}] XSS protection [{Red}NOT VULNERABLE{White}] - ", req['X-XSS-Protection'])
     except KeyError:
-        print(f"XSS protection [{Green}VULNERABLE {White} (not exist header!)")
+        print(f"[{Green}+{White}] XSS protection [{Green}VULNERABLE {White} (not exist header!)")
     ## Verificar se é vulneravel a Clickjacking
     try:
         if req['X-Frame-Options'] == "SAMEORIGIN":
-            print(f"Clickjacking [{Red}NOT VULNERABLE {White}")
+            print(f"[{Red}-{White}] Clickjacking [{Red}NOT VULNERABLE{White}]")
         else:
-            print(f"Clickjacking [{Red}NOT VULNERABLE{White}")
+            print(f"[{Red}-{White}] Clickjacking [{Red}NOT VULNERABLE{White}]")
     except KeyError:
-        print("Clickjacking [{Green}VULNERABLE {White}")
+        print("Clickjacking [{Green}VULNERABLE {White}]")
 
 try:
     if not args.url:
