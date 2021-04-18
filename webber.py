@@ -6,12 +6,19 @@ import sys
 import ctypes
 from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
-from colorama import init, Fore
+from colorama import Fore
+## My functions
+from lib.files import Fuzz
 
+## Colors ##
 Green = Fore.GREEN
 White = Fore.WHITE
 Red = Fore.RED
 Cyan = Fore.CYAN
+Blue = Fore.BLUE
+Magentaf = Fore.LIGHTMAGENTA_EX
+Redf = Fore.LIGHTRED_EX
+## Colors ##
 
 try:
     kernel32 = ctypes.windll.kernel32
@@ -19,12 +26,13 @@ try:
 except AttributeError:
     pass
 
-__version__ = 1.1
+__version__ = 1.2
 __author__ = 'HooS'
 
 parser = argparse.ArgumentParser(description="Scan webpage for searching vulnerability!")
 parser.add_argument("-u", "--url", help="Indicar o URL")
 parser.add_argument("-v", "--version", help="Indicate the version of this tool'", action="store_true")
+parser.add_argument("--skip-rate", help="Skip the Rate limiting", action="store_true")
 parser.add_argument("--update", help="Update the tool",action="store_true")
 args = parser.parse_args()
 
@@ -57,7 +65,7 @@ def verify(url):
     req = pedido.headers
     ## Verificar se tem o header Server
     try:
-        print("Server: ", req['Server'])
+        print("Server: ",Magentaf, req['Server'], White)
     except KeyError:
         print("Server header [NOT EXIST]")
 
@@ -72,7 +80,7 @@ def verify(url):
         else:
             print(f"[{Red}-{White}] XSS protection [{Red}NOT VULNERABLE{White}] - ", req['X-XSS-Protection'])
     except KeyError:
-        print(f"[{Green}+{White}] XSS protection [{Green}VULNERABLE {White} (not exist header!)")
+        print(f"[{Green}+{White}] XSS protection [{Green}VULNERABLE{White}] (not exist header!)")
     ## Verificar se é vulneravel a Clickjacking
     try:
         if req['X-Frame-Options'] == "SAMEORIGIN":
@@ -80,15 +88,17 @@ def verify(url):
         else:
             print(f"[{Red}-{White}] Clickjacking [{Red}NOT VULNERABLE{White}]")
     except KeyError:
-        print("Clickjacking [{Green}VULNERABLE {White}]")
+        print(f"[{Green}+{White}] Clickjacking [{Green}VULNERABLE{White}]")
 
 try:
-    
     if args.url:
+        fz = Fuzz(args.url)
         banner()
-        print("URL: ", args.url)
+        print("URL: ",Blue, args.url, White)
         verify(args.url)
-        rate_limiting(args.url)
+        if not args.skip_rate:
+           rate_limiting(args.url)
+        fz.check()
     elif args.version:
         banner()
         print("Developed by", __author__)
@@ -111,11 +121,11 @@ except ConnectionError:
     
 except KeyboardInterrupt:
     banner()
-    print("\r ({}) Action canceled by user!" .format(time.strftime("%X")))
+    print("\r({}{}{}) Action canceled by user!" .format(Redf,time.strftime("%X"), White))
 
 except MissingSchema:
     banner()
-    print("\r ({}) Invalid URL!" .format(time.strftime("%X")))
+    print("\r({}) Invalid URL!" .format(time.strftime("%X")))
 
 ## Verify version of Python
 if sys.version_info[0] < 3:
