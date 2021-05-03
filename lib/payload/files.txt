@@ -1,4 +1,6 @@
 web.xml
+ajax
+ajax/
 phpinfo.php
 wp-admin/
 wp-admin/xmlrpc.php

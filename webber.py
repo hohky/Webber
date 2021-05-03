@@ -6,9 +6,13 @@ import sys
 import ctypes
 from requests.exceptions import ConnectionError
 from requests.exceptions import MissingSchema
+from requests.exceptions import InvalidSchema
+from requests.exceptions import TooManyRedirects
 from colorama import Fore
 ## My functions
 from lib.files import Fuzz
+from lib.params import Vulns
+from lib.waf import waf
 
 ## Colors ##
 Green = Fore.GREEN
@@ -18,7 +22,13 @@ Cyan = Fore.CYAN
 Blue = Fore.BLUE
 Magentaf = Fore.LIGHTMAGENTA_EX
 Redf = Fore.LIGHTRED_EX
+Whiter = Fore.LIGHTWHITE_EX
 ## Colors ##
+
+
+"""
+Copyright (c) 2020-2021 HooS developer (https://github.com/hohky/Webber)
+"""
 
 try:
     kernel32 = ctypes.windll.kernel32
@@ -26,15 +36,18 @@ try:
 except AttributeError:
     pass
 
-__version__ = 1.2
+__version__ = 1.3
 __author__ = 'HooS'
 
-parser = argparse.ArgumentParser(description="Scan webpage for searching vulnerability!")
+parser = argparse.ArgumentParser(description="Scan website for searching vulnerability!")
 parser.add_argument("-u", "--url", help="Indicar o URL")
-parser.add_argument("-v", "--version", help="Indicate the version of this tool'", action="store_true")
-parser.add_argument("--skip-rate", help="Skip the Rate limiting", action="store_true")
+parser.add_argument("-v", "--version", help="Indicate the version of this tool", action="store_true")
+parser.add_argument("-sr", "--skip-rate", help="Skip the Rate limiting", action="store_true")
+parser.add_argument("-sf", "--skip-fuzzer", help="Skip the Fuzzer", action="store_true")
+parser.add_argument("-sp", "--skip-params", help="Skip the Params scanner", action="store_true")
 parser.add_argument("--update", help="Update the tool",action="store_true")
 args = parser.parse_args()
+
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
@@ -47,11 +60,11 @@ def banner():
                                  {White}''')
 
 def rate_limiting(url):
-    print("Send multiple HTTP requests... Verify the rate limiting is exists...")
+    print("Send multiple HTTP requests... Verify the rate limiting is exists...",end="\r")
     for send in range(20):
         response = requests.get(url)
     if response.ok:
-        print(f"[{Green}+{White}] RATE LIMITING [{Green}VULNERABLE{White}]")
+        print(f"[{Green}+{White}] RATE LIMITING [{Green}VULNERABLE{White}]", end="\r")
     else:
         print(f"[{Red}-{White}] RATE LIMITING [{Red}NOT VULNERABLE{White}]")
         for by in range(15):
@@ -59,7 +72,7 @@ def rate_limiting(url):
         if bypass.ok:
             print(f"[{Green}+{White}] RATE LIMITING BYPASS [{Green}VULNERABLE{White}] - with Header 'X-Forwarded-For'")
         else:
-            print(f"[{Red}-{White}]RATE LIMITING BYPASS [{Red}NOT VULNERABLE{White}]")
+            print(f"[{Red}-{White}] RATE LIMITING BYPASS [{Red}NOT VULNERABLE{White}]")
 def verify(url):
     pedido = requests.get(url, headers={"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"})
     req = pedido.headers
@@ -92,13 +105,18 @@ def verify(url):
 
 try:
     if args.url:
-        fz = Fuzz(args.url)
+        fz = Fuzz(args.url) ## My class from lib.params
+        vulner = Vulns(args.url) ## My class from lib.params
         banner()
-        print("URL: ",Blue, args.url, White)
+        print("URL: ",Whiter, args.url, White)
         verify(args.url)
+        waf(args.url)
         if not args.skip_rate:
            rate_limiting(args.url)
-        fz.check()
+        if not args.skip_fuzzer:
+            fz.check()
+        if not args.skip_params:
+            vulner.check_params()
     elif args.version:
         banner()
         print("Developed by", __author__)
@@ -111,25 +129,27 @@ try:
         if options['version'] == __version__:
             print("The tool is up to date!")
         else:
-            print(f"New Version: {options['version']} \n Update in https://github.com/hohky/Webber")
+            print(f"New Version: {options['version']} \nUpdate in https://github.com/hohky/Webber")
     else:
         banner()
         print("\nHelp command -> --help")
 except ConnectionError:
     banner()
-    print("\r ({}) Connection error!" .format(time.strftime("%X")))
+    print("\r({}{}{}) Connection Error!" .format(Redf,time.strftime("%X"), White))
     
 except KeyboardInterrupt:
     banner()
     print("\r({}{}{}) Action canceled by user!" .format(Redf,time.strftime("%X"), White))
 
 except MissingSchema:
-    banner()
-    print("\r({}) Invalid URL!" .format(time.strftime("%X")))
+    print("\r({}{}{}) Invalid URL!" .format(Redf,time.strftime("%X"), White))
 
-## Verify version of Python
-if sys.version_info[0] < 3:
-    raise Exception("Must be using Python 3")
+except InvalidSchema:
+    print("\r({}{}{}) Invalid URL!" .format(Redf,time.strftime("%X"), White))
+
+except TooManyRedirects:
+    print("\r({}{}{}) Too many Redirects!" .format(Redf,time.strftime("%X"), White))
+
 
 if __name__ != '__main__':
     sys.exit()
