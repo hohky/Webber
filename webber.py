@@ -4,11 +4,7 @@ import requests
 import argparse
 import time
 import sys
-from requests.exceptions import ConnectionError
-from requests.exceptions import MissingSchema
-from requests.exceptions import InvalidSchema
-from requests.exceptions import TooManyRedirects
-from colorama import Fore
+from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema, TooManyRedirects
 
 ## Webber functions
 from lib.files import Fuzz
@@ -18,7 +14,6 @@ from lib.exceptions import *
 from lib.common.colors import *
 from lib.vuln import common
 
-##
 
 
 """
