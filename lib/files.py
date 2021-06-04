@@ -2,8 +2,8 @@ import requests
 import json
 from os import path
 from requests.exceptions import ConnectionError
-from urllib.parse import urlparse
-from colorama import Fore
+from .common.colors import *
+from .common import parser
 from time import sleep
 
 
@@ -12,23 +12,15 @@ Copyright (c) 2020-2021 HooS developer (https://github.com/hohky/Webber)
 """
 
 
-## Colors ##
-Green = Fore.GREEN
-White = Fore.WHITE
-Red = Fore.RED
-Yellow = Fore.YELLOW
-Redf = Fore.LIGHTRED_EX
-Yellowf = Fore.LIGHTYELLOW_EX
-## Colors ##
-
 
 class Fuzz:
     domain = None
     URL = None
     def __init__(self,url):
         self.url = url
-        Fuzz.domain = urlparse(self.url).netloc
-        Fuzz.protocol = urlparse(self.url).scheme
+        self.parsed = parser.parse_url(self.url)
+        Fuzz.domain = self.parsed.netloc
+        Fuzz.protocol = self.parsed.scheme
         Fuzz.URL = self.url
 
     def check(self):

@@ -61,6 +61,9 @@ admin.passwd
 admin.php3
 admin/.config
 admin/.htaccess
+.git/config
+.git/
+.git
 admin/access.log
 admin/access.txt
 admin/access_log
