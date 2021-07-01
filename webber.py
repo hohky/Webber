@@ -65,8 +65,7 @@ try:
         print(f"Version of tool:{Green}", __version__,White)
     elif args.update:
         ## Verify updates in repository github
-        reqs = requests.get("https://raw.githubusercontent.com/hohky/Webber/main/options.json")
-        options = reqs.json()
+        options = requests.get("https://raw.githubusercontent.com/hohky/Webber/main/options.json").json()
         banner()
         if options['version'] == __version__:
             print("The tool is up to date!")
