@@ -8,7 +8,7 @@ from os import path
 Copyright (c) 2020-2021 HooS developer (https://github.com/hohky/Webber)
 """
 
-dir_path = path.dirname(path.realpath(__file__))
+DIR_PATH = path.dirname(path.realpath(__file__))
 
 class Vulns:
     
@@ -42,7 +42,7 @@ class Vulns:
     def _xss(self, parame, data):
         self.url = Vulns.URL
         self.params = self.__parser()
-        self.list = open(dir_path + "/payload/xss.txt")
+        self.list = open(DIR_PATH + "/payload/xss.txt")
         self.num = 0
         print(f"[{Green}XSS{White}] Testing GET parameter {Yellowf}({parame}){White}")
         for payload in self.list:
@@ -64,7 +64,7 @@ class Vulns:
     
     def _sqli(self, parame, data):
         self.url = Vulns.URL
-        #self.list = open(dir_path + "/payload/sqli.txt")
+        #self.list = open(DIR_PATH + "/payload/sqli.txt")
         print(f"[{Yellowf}SQLi{White}] Testing GET parameter {Cyan}({parame}){White}")
         self.payload = data + "'"
         urle = self.url.replace(data, self.payload)
