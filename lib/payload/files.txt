@@ -77,3 +77,5 @@ admin/controlpanel
 admin/cp
 admin/db
 admin/export
+nginx.conf
+apache2.conf
