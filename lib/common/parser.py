@@ -8,10 +8,7 @@ Copyright (c) 2020-2021 HooS developer (https://github.com/hohky/Webber)
 
 def verify_params(url):
         params = parse_qsl(urlsplit(url).query)
-        if len(params) > 0:
-            return True
-        else:
-            return False
+        return if len(params) > 0
 
 
 def parse_param(url):
