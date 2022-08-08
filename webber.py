@@ -13,6 +13,7 @@ from lib.waf import waf
 from lib.exceptions import *
 from lib.common.colors import *
 from lib.vuln import common
+from lib.method import Method
 
 
 
@@ -28,6 +29,7 @@ parser.add_argument("-u", "--url", help="Indicar o URL")
 parser.add_argument("-v", "--version", help="Indicate the version of this tool", action="store_true")
 parser.add_argument("-sr", "--skip-rate", help="Skip the Rate limiting", action="store_true")
 parser.add_argument("-sf", "--skip-fuzzer", help="Skip the Fuzzer", action="store_true")
+parser.add_argument("-sm", "--skip-methods", help="Skip the Methods scanner", action="store_true")
 parser.add_argument("-sp", "--skip-params", help="Skip the Params scanner", action="store_true")
 parser.add_argument("--update", help="Update the tool",action="store_true")
 args = parser.parse_args()
@@ -59,6 +61,9 @@ try:
             fz.check()
         if not args.skip_params:
             vulner.check_params()
+        if not args.skip_methods:
+            e = Method(("https://www.google.com"))
+            e.send()
     elif args.version:
         banner()
         print("Developed by", __author__)
