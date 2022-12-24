@@ -79,3 +79,4 @@ admin/db
 admin/export
 nginx.conf
 apache2.conf
+docker-compose.yml
